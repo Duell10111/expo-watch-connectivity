@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "expo-watch-connectivity": ["../src/index"],
+      "expo-watch-connectivity/*": ["../src/*"]
+    }
+  }
+}
