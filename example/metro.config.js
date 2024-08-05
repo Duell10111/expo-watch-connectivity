@@ -31,4 +31,9 @@ config.transformer.getTransformOptions = async () => ({
   },
 });
 
+config.resolver.assetExts.push(
+  // Adds support for `.db` files for SQLite databases
+  'mp3'
+);
+
 module.exports = config;

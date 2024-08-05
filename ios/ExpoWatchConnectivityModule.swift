@@ -16,7 +16,7 @@ public class ExpoWatchConnectivityModule: Module {
     ])
 
     // Defines event names that the module can send to JavaScript.
-    Events("onChange")
+    Events("onChange", "sessionStatus", "newMessage")
 
     // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
     Function("hello") {
@@ -31,14 +31,44 @@ public class ExpoWatchConnectivityModule: Module {
         "value": value
       ])
     }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(ExpoWatchConnectivityView.self) {
-      // Defines a setter for the `name` prop.
-      Prop("name") { (view: ExpoWatchConnectivityView, prop: String) in
-        print(prop)
+      
+      AsyncFunction("isPaired") {
+          return SessionSyncStruct.shared.session.isPaired
       }
+      
+      AsyncFunction("isWatchAppInstalled") {
+          return SessionSyncStruct.shared.session.isWatchAppInstalled
+      }
+      
+      AsyncFunction("isReachable") {
+          return SessionSyncStruct.shared.session.isReachable
+      }
+      
+      AsyncFunction("sendMessage") { (message: [String: Any]) in
+          SessionSyncStruct.shared.session.sendMessage(message, replyHandler: nil)
+      }
+      
+      AsyncFunction("getCurrentFileTransfers") {
+          return SessionSyncStruct.shared.session.outstandingFileTransfers.map { transfer in
+              return FileTransferInfo(uri: transfer.file.fileURL.absoluteString, process: transfer.progress.completedUnitCount)
+          }
+      }
+      
+      AsyncFunction("sendFile") { (url: String, metadata: [String: Any]?, promise: Promise) in
+          if let fileURL = URL(string: url) {
+              SessionSyncStruct.shared.session.transferFile(fileURL, metadata: metadata)
+              promise.resolve()
+          } else {
+              promise.reject("111", "Init File Transfer failed")
+          }
+      }
+      
+    OnCreate {
+        SessionSyncStruct.module = self
+    }
+      
+    OnDestroy {
+        SessionSyncStruct.module = nil
     }
   }
 }
