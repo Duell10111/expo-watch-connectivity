@@ -24,7 +24,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build plugin
-        run: yarn plugin:build
+        run: yarn build
 
       - name: Semantic Release (Versioning)
         run: npx semantic-release --dry-run
