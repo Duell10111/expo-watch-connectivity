@@ -1,6 +1,6 @@
 {
   "name": "expo-watch-connectivity",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Expo Module based Watch Connectivity Library",
   "main": "build/index.js",
   "types": "build/index.d.ts",
