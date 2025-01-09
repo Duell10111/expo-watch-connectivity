@@ -53,4 +53,19 @@ class WatchSession: NSObject, WCSessionDelegate {
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         SessionSyncStruct.module?.sendEvent("newMessage", message)
     }
+    
+    func session(_ session: WCSession, didReceive file: WCSessionFile) {
+        SessionSyncStruct.module?.sendEvent("newFile", [
+            "uri": file.fileURL,
+            "metadata": file.metadata
+        ])
+    }
+    
+    func session(_ session: WCSession, didFinish fileTransfer: WCSessionFileTransfer, error: (any Error)?) {
+        SessionSyncStruct.module?.sendEvent("finishedFileTransfer", [
+            "uri": fileTransfer.file.fileURL,
+            "metadata": fileTransfer.file.metadata,
+            "error": error?.localizedDescription
+        ])
+    }
 }
