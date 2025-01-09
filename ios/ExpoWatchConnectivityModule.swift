@@ -31,7 +31,7 @@ public class ExpoWatchConnectivityModule: Module {
 
       AsyncFunction("getCurrentFileTransfers") {
           return SessionSyncStruct.shared.session.outstandingFileTransfers.map { transfer in
-              return FileTransferInfo(uri: transfer.file.fileURL.absoluteString, process: transfer.progress.completedUnitCount)
+              return FileTransferInfo(uri: transfer.file.fileURL.absoluteString, process: transfer.progress.fractionCompleted, transferring: transfer.isTransferring, paused: transfer.progress.isPaused)
           }
       }
 

@@ -12,5 +12,9 @@ struct FileTransferInfo: Record {
     @Field
     var uri: String = ""
     @Field
-    var process: Int64 = 0
+    var process: Double = 0.0
+    @Field
+    var transferring: Bool = false
+    @Field
+    var paused: Bool = false
 }

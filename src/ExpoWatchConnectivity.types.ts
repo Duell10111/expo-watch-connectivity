@@ -14,4 +14,6 @@ export type FileTransferFinishedPayload = {
 export type FileTransferInfo = {
   uri: string;
   process: number;
+  transferring: boolean;
+  paused: boolean;
 };
