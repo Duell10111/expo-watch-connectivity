@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import ExpoModulesCore
 
-struct FileTransferInfo {
-    var uri: String
-    var process: Int64
+struct FileTransferInfo: Record {
+    @Field
+    var uri: String = ""
+    @Field
+    var process: Int64 = 0
 }
