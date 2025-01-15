@@ -68,4 +68,8 @@ class WatchSession: NSObject, WCSessionDelegate {
             "error": error?.localizedDescription
         ])
     }
+    
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        SessionSyncStruct.module?.sendEvent("applicationContext", applicationContext)
+    }
 }

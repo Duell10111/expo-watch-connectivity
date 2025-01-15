@@ -7,10 +7,11 @@ import {
 // Import the native module. On web, it will be resolved to ExpoWatchConnectivity.web.ts
 // and on native platforms to ExpoWatchConnectivity.ts
 import {
+  ApplicationContextPayload,
   FileTransferFinishedPayload,
   FileTransferInfo,
   NewFilePayload,
-  NewMessagePayload,
+  NewMessagePayload
 } from "./ExpoWatchConnectivity.types";
 import ExpoWatchConnectivityModule from "./ExpoWatchConnectivityModule";
 
@@ -74,9 +75,27 @@ export function addFileTransferFinishedListener(
   );
 }
 
+export function getApplicationContext(): Promise<ApplicationContextPayload | null> {
+  return ExpoWatchConnectivityModule.getApplicationContext();
+}
+
+export function updateApplicationContext(value: ApplicationContextPayload): Promise<void> {
+  return ExpoWatchConnectivityModule.updateApplicationContext(value);
+}
+
+export function addApplicationContextListener(
+  listener: (event: ApplicationContextPayload) => void,
+): Subscription {
+  return emitter.addListener<ApplicationContextPayload>(
+    "applicationContext",
+    listener,
+  );
+}
+
 export {
   NewFilePayload,
   FileTransferFinishedPayload,
   FileTransferInfo,
   NewMessagePayload,
+  ApplicationContextPayload,
 };

@@ -17,3 +17,5 @@ export type FileTransferInfo = {
   transferring: boolean;
   paused: boolean;
 };
+
+export type ApplicationContextPayload = { [key: string]: any };

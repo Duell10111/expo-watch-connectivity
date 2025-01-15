@@ -11,7 +11,7 @@ public class ExpoWatchConnectivityModule: Module {
     Name("ExpoWatchConnectivity")
 
     // Defines event names that the module can send to JavaScript.
-    Events("onChange", "sessionStatus", "newMessage", "newFile", "finishedFileTransfer")
+    Events("onChange", "sessionStatus", "newMessage", "newFile", "finishedFileTransfer", "applicationContext")
 
       AsyncFunction("isPaired") {
           return SessionSyncStruct.shared.session.isPaired
@@ -41,6 +41,19 @@ public class ExpoWatchConnectivityModule: Module {
               promise.resolve()
           } else {
               promise.reject("111", "Init File Transfer failed")
+          }
+      }
+      
+      AsyncFunction("getApplicationContext") { (promise: Promise) in
+          promise.resolve(SessionSyncStruct.shared.session.applicationContext)
+      }
+      
+      AsyncFunction("updateApplicationContext") { (context: [String: Any], promise: Promise) in
+          do {
+              try SessionSyncStruct.shared.session.updateApplicationContext(context)
+              promise.resolve()
+          } catch {
+              promise.reject(error)
           }
       }
 
