@@ -19,3 +19,14 @@ export type FileTransferInfo = {
 };
 
 export type ApplicationContextPayload = { [key: string]: any };
+
+export type SessionStatePayload = {
+  active: boolean;
+  activationState: number;
+};
+
+export type BooleanStatePayload = {
+  state: boolean;
+}
+
+export type ActivationState = "activated" | "inactive" | "notActivated";

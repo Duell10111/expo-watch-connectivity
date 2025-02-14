@@ -10,16 +10,8 @@ import WatchConnectivity
 
 struct SessionSyncStruct {
   static let shared = WatchSession()
-    
-  static var module : ExpoWatchConnectivityModule? = nil
 
-  init() {
-    if WCSession.isSupported() {
-      //let session = WCSession.default
-        //session.delegate = self
-        //session.activateSession()
-    }
-  }
+  static var module : ExpoWatchConnectivityModule? = nil
 }
 
 class WatchSession: NSObject, WCSessionDelegate {
@@ -28,39 +20,58 @@ class WatchSession: NSObject, WCSessionDelegate {
     var applicationContext : [String: Any] = [:]
 
     override init() {
-      super.init()
-      print("SessionSync")
-      if (WCSession.isSupported()) {
-        session.delegate = self
-        session.activate()
-      } else {
-          print("Session not supported")
-      }
+        super.init()
+        activateSession()
     }
-    
+
+    private func activateSession() {
+        if (WCSession.isSupported()) {
+            session = WCSession.default
+            session.delegate = self
+            session.activate()
+        } else {
+            print("WCSession not supported")
+        }
+    }
+
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
-        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": true])
+        let active = WCSessionActivationState.activated.rawValue == activationState.rawValue
+        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": active, "error": error?.localizedDescription])
     }
-    
+
     func sessionDidBecomeInactive(_ session: WCSession) {
-        SessionSyncStruct.module?.sendEvent("sessionStatus", ["inactive": false])
-    }
-    
-    func sessionDidDeactivate(_ session: WCSession) {
         SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": false])
     }
-    
+
+    func sessionDidDeactivate(_ session: WCSession) {
+        // Begin the activation process for the new Apple Watch.
+        activateSession()
+
+        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": false])
+    }
+
+    func sessionWatchStateDidChange(_ session: WCSession) {
+        SessionSyncStruct.module?.sendEvent("installedState", ["state": session.isWatchAppInstalled])
+        SessionSyncStruct.module?.sendEvent("pairedState", ["state": session.isPaired])
+    }
+
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        SessionSyncStruct.module?.sendEvent("reachableState", ["state": session.isReachable])
+    }
+
+    // Data updates
+
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         SessionSyncStruct.module?.sendEvent("newMessage", message)
     }
-    
+
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
         SessionSyncStruct.module?.sendEvent("newFile", [
             "uri": file.fileURL,
             "metadata": file.metadata
         ])
     }
-    
+
     func session(_ session: WCSession, didFinish fileTransfer: WCSessionFileTransfer, error: (any Error)?) {
         SessionSyncStruct.module?.sendEvent("finishedFileTransfer", [
             "uri": fileTransfer.file.fileURL,
@@ -68,7 +79,7 @@ class WatchSession: NSObject, WCSessionDelegate {
             "error": error?.localizedDescription
         ])
     }
-    
+
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         SessionSyncStruct.module?.sendEvent("applicationContext", applicationContext)
     }

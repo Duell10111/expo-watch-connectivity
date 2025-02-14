@@ -11,7 +11,8 @@ public class ExpoWatchConnectivityModule: Module {
     Name("ExpoWatchConnectivity")
 
     // Defines event names that the module can send to JavaScript.
-    Events("onChange", "sessionStatus", "newMessage", "newFile", "finishedFileTransfer", "applicationContext")
+    Events("installedState", "reachableState", "pairedState", "onChange", "sessionStatus",
+           "newMessage", "newFile", "finishedFileTransfer", "applicationContext")
 
       AsyncFunction("isPaired") {
           return SessionSyncStruct.shared.session.isPaired
@@ -23,6 +24,10 @@ public class ExpoWatchConnectivityModule: Module {
 
       AsyncFunction("isReachable") {
           return SessionSyncStruct.shared.session.isReachable
+      }
+      
+      AsyncFunction("getActivationState") {
+          return SessionSyncStruct.shared.session.activationState.rawValue
       }
 
       AsyncFunction("sendMessage") { (message: [String: Any]) in
