@@ -35,8 +35,15 @@ class WatchSession: NSObject, WCSessionDelegate {
     }
 
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
-        let active = WCSessionActivationState.activated.rawValue == activationState.rawValue
+        let active = activationState == .activated
         SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": active, "error": error?.localizedDescription])
+        
+        // Once session activated send state updates to fix issues with wrong values
+        if active {
+            SessionSyncStruct.module?.sendEvent("installedState", ["state": session.isWatchAppInstalled])
+            SessionSyncStruct.module?.sendEvent("pairedState", ["state": session.isPaired])
+            SessionSyncStruct.module?.sendEvent("reachableState", ["state": session.isReachable])
+        }
     }
 
     func sessionDidBecomeInactive(_ session: WCSession) {

@@ -1,8 +1,4 @@
-import {
-  NativeModulesProxy,
-  EventEmitter,
-  Subscription,
-} from "expo-modules-core";
+import { EventEmitter, NativeModulesProxy, Subscription } from "expo-modules-core";
 
 // Import the native module. On web, it will be resolved to ExpoWatchConnectivity.web.ts
 // and on native platforms to ExpoWatchConnectivity.ts
@@ -13,14 +9,13 @@ import {
   FileTransferFinishedPayload,
   FileTransferInfo,
   NewFilePayload,
-  NewMessagePayload, SessionStatePayload
+  NewMessagePayload,
+  SessionStatePayload
 } from "./ExpoWatchConnectivity.types";
 import ExpoWatchConnectivityModule from "./ExpoWatchConnectivityModule";
 import { useEffect, useState } from "react";
 
-export async function setValueAsync(value: string) {
-  return await ExpoWatchConnectivityModule.setValueAsync(value);
-}
+export const isSupported = ExpoWatchConnectivityModule.isSupported as boolean;
 
 export async function isPaired(): Promise<boolean> {
   return ExpoWatchConnectivityModule.isPaired();
@@ -34,21 +29,8 @@ export async function isReachable(): Promise<boolean> {
   return ExpoWatchConnectivityModule.isReachable();
 }
 
-export async function getActivationState(): Promise<ActivationState | undefined> {
-  const activationState = ExpoWatchConnectivityModule.getActivationState() as number;
-  return parseActivationState(activationState);
-}
-
-function parseActivationState(activationState: number) {
-  switch (activationState) {
-    case 0:
-      return "notActivated";
-    case 1:
-      return "inactive";
-    case 2:
-      return "activated";
-  }
-  return undefined
+export async function getActivationState(): Promise<ActivationState> {
+  return ExpoWatchConnectivityModule.getActivationState() as number;
 }
 
 export async function getCurrentFileTransfers(): Promise<FileTransferInfo[]> {
@@ -146,10 +128,7 @@ export function addActivationListener(
   return emitter.addListener<SessionStatePayload>(
     "sessionStatus",
     (event) => {
-      const parsedState = parseActivationState(event.activationState)
-      if (parsedState) {
-        listener(parsedState);
-      }
+      listener(event.activationState)
     },
   );
 }

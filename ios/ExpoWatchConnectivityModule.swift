@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import WatchConnectivity
 
 public class ExpoWatchConnectivityModule: Module {
   // Each module class must implement the definition function. The definition consists of components
@@ -9,6 +10,10 @@ public class ExpoWatchConnectivityModule: Module {
     // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
     // The module will be accessible from `requireNativeModule('ExpoWatchConnectivity')` in JavaScript.
     Name("ExpoWatchConnectivity")
+
+    Constants([
+        "isSupported": WCSession.isSupported()
+    ])
 
     // Defines event names that the module can send to JavaScript.
     Events("installedState", "reachableState", "pairedState", "onChange", "sessionStatus",
@@ -25,7 +30,7 @@ public class ExpoWatchConnectivityModule: Module {
       AsyncFunction("isReachable") {
           return SessionSyncStruct.shared.session.isReachable
       }
-      
+
       AsyncFunction("getActivationState") {
           return SessionSyncStruct.shared.session.activationState.rawValue
       }
@@ -48,11 +53,11 @@ public class ExpoWatchConnectivityModule: Module {
               promise.reject("111", "Init File Transfer failed")
           }
       }
-      
+
       AsyncFunction("getApplicationContext") { (promise: Promise) in
           promise.resolve(SessionSyncStruct.shared.session.applicationContext)
       }
-      
+
       AsyncFunction("updateApplicationContext") { (context: [String: Any], promise: Promise) in
           do {
               try SessionSyncStruct.shared.session.updateApplicationContext(context)

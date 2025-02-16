@@ -29,4 +29,17 @@ export type BooleanStatePayload = {
   state: boolean;
 }
 
-export type ActivationState = "activated" | "inactive" | "notActivated";
+export enum ActivationState {
+  /**
+   * If session is not activated.
+   */
+  NOT_ACTIVATED,
+  /**
+   * If session is not active and going to not activated.
+   */
+  INACTIVE,
+  /**
+   * If session is active.
+   */
+  ACTIVE,
+}
