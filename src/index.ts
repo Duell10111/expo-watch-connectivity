@@ -10,7 +10,9 @@ import {
   FileTransferInfo,
   NewFilePayload,
   NewMessagePayload,
-  SessionStatePayload
+  SessionStatePayload,
+  TransferMetadata,
+  UserInfoTransferFinishedPayload,
 } from "./ExpoWatchConnectivity.types";
 import ExpoWatchConnectivityModule from "./ExpoWatchConnectivityModule";
 import { useEffect, useState } from "react";
@@ -41,6 +43,12 @@ export async function sendMessage(message: {
   [key: string]: any;
 }): Promise<boolean> {
   return ExpoWatchConnectivityModule.sendMessage(message);
+}
+
+export async function transferUserInfo(userInfo: {
+  [key: string]: any;
+}): Promise<boolean> {
+  return ExpoWatchConnectivityModule.transferUserInfo(userInfo);
 }
 
 export async function sendFile(
@@ -77,8 +85,29 @@ export function addFileTransferFinishedListener(
   );
 }
 
+/**
+ * Called when a `transferUserInfo` call finished. Failed transfers carry `error`,
+ * including immediate deliveries that could not be queued as a fallback.
+ */
+export function addUserInfoTransferFinishedListener(
+  listener: (event: UserInfoTransferFinishedPayload) => void,
+): Subscription {
+  return emitter.addListener<UserInfoTransferFinishedPayload>(
+    "finishedUserInfoTransfer",
+    listener,
+  );
+}
+
 export function getApplicationContext(): Promise<ApplicationContextPayload | null> {
   return ExpoWatchConnectivityModule.getApplicationContext();
+}
+
+/**
+ * Returns the most recent application context received from the watch.
+ * `getApplicationContext` returns the context this device sent last.
+ */
+export function getReceivedApplicationContext(): Promise<ApplicationContextPayload> {
+  return ExpoWatchConnectivityModule.getReceivedApplicationContext();
 }
 
 export function updateApplicationContext(value: ApplicationContextPayload): Promise<void> {
@@ -189,4 +218,6 @@ export {
   FileTransferInfo,
   NewMessagePayload,
   ApplicationContextPayload,
+  TransferMetadata,
+  UserInfoTransferFinishedPayload,
 };

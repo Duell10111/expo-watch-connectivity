@@ -17,7 +17,7 @@ public class ExpoWatchConnectivityModule: Module {
 
     // Defines event names that the module can send to JavaScript.
     Events("installedState", "reachableState", "pairedState", "onChange", "sessionStatus",
-           "newMessage", "newFile", "finishedFileTransfer", "applicationContext")
+           "newMessage", "newFile", "finishedFileTransfer", "finishedUserInfoTransfer", "applicationContext")
 
       AsyncFunction("isPaired") {
           return SessionSyncStruct.shared.session.isPaired
@@ -36,12 +36,28 @@ public class ExpoWatchConnectivityModule: Module {
       }
 
       AsyncFunction("sendMessage") { (message: [String: Any]) in
-          SessionSyncStruct.shared.session.sendMessage(message, replyHandler: nil)
+          SessionSyncStruct.shared.session.sendMessage(message, replyHandler: nil) { error in
+              print("Failed to send interactive WatchConnectivity message: \(error.localizedDescription)")
+          }
+          return true
+      }
+
+      AsyncFunction("transferUserInfo") { (userInfo: [String: Any]) in
+          return SessionSyncStruct.shared.sendUserInfo(userInfo)
       }
 
       AsyncFunction("getCurrentFileTransfers") {
-          return SessionSyncStruct.shared.session.outstandingFileTransfers.map { transfer in
-              return FileTransferInfo(uri: transfer.file.fileURL.absoluteString, process: transfer.progress.fractionCompleted, transferring: transfer.isTransferring, paused: transfer.progress.isPaused)
+          return SessionSyncStruct.shared.session.outstandingFileTransfers.map { transfer -> [String: Any] in
+              var info: [String: Any] = [
+                  "uri": transfer.file.fileURL.absoluteString,
+                  "process": transfer.progress.fractionCompleted,
+                  "transferring": transfer.isTransferring,
+                  "paused": transfer.progress.isPaused
+              ]
+              if let metadata = transfer.file.metadata {
+                  info["metadata"] = metadata
+              }
+              return info
           }
       }
 
@@ -58,6 +74,10 @@ public class ExpoWatchConnectivityModule: Module {
           promise.resolve(SessionSyncStruct.shared.session.applicationContext)
       }
 
+      AsyncFunction("getReceivedApplicationContext") { (promise: Promise) in
+          promise.resolve(SessionSyncStruct.shared.session.receivedApplicationContext)
+      }
+
       AsyncFunction("updateApplicationContext") { (context: [String: Any], promise: Promise) in
           do {
               try SessionSyncStruct.shared.session.updateApplicationContext(context)
@@ -71,7 +91,32 @@ public class ExpoWatchConnectivityModule: Module {
         SessionSyncStruct.module = self
     }
 
+    OnStartObserving("newMessage") {
+        SessionSyncStruct.shared.startObserving("newMessage")
+    }
+
+    OnStopObserving("newMessage") {
+        SessionSyncStruct.shared.stopObserving("newMessage")
+    }
+
+    OnStartObserving("newFile") {
+        SessionSyncStruct.shared.startObserving("newFile")
+    }
+
+    OnStopObserving("newFile") {
+        SessionSyncStruct.shared.stopObserving("newFile")
+    }
+
+    OnStartObserving("finishedUserInfoTransfer") {
+        SessionSyncStruct.shared.startObserving("finishedUserInfoTransfer")
+    }
+
+    OnStopObserving("finishedUserInfoTransfer") {
+        SessionSyncStruct.shared.stopObserving("finishedUserInfoTransfer")
+    }
+
     OnDestroy {
+        SessionSyncStruct.shared.stopObservingAll()
         SessionSyncStruct.module = nil
     }
   }
