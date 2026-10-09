@@ -1,15 +1,13 @@
 import * as ExpoWatchConnectivity from "expo-watch-connectivity";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { addMessageListener } from "expo-watch-connectivity";
 import { useAssets } from "expo-asset";
 
 export default function App() {
-  const [paired, setPaired] = useState(false);
-
-  useEffect(() => {
-    ExpoWatchConnectivity.isPaired().then(setPaired).catch(console.error);
-  }, []);
+  const paired = ExpoWatchConnectivity.usePaired();
+  const installed = ExpoWatchConnectivity.useInstalled();
+  const reachable = ExpoWatchConnectivity.useReachable();
 
   useEffect(() => {
     const sub = addMessageListener((message) => {
@@ -18,19 +16,25 @@ export default function App() {
     return () => sub.remove();
   }, []);
 
-  const [assets, error] = useAssets([require("./assets/music.mp3")]);
+  const [assets] = useAssets([require("./assets/music.mp3")]);
+  const fileUri = assets?.[0]?.localUri;
 
   return (
     <View style={styles.container}>
-      <Text>{ExpoWatchConnectivity.hello()}</Text>
+      <Text>{"Supported: " + ExpoWatchConnectivity.isSupported}</Text>
       <Text>{"Paired: " + paired}</Text>
+      <Text>{"Installed: " + installed}</Text>
+      <Text>{"Reachable: " + reachable}</Text>
       <Button
         title={"Send Hello World"}
         onPress={() => ExpoWatchConnectivity.sendMessage({ hello: "world" })}
       />
       <Button
         title={"Send Test File"}
-        onPress={() => ExpoWatchConnectivity.sendFile(assets?.[0].localUri,{ hello: "world" })}
+        disabled={!fileUri}
+        onPress={() =>
+          fileUri && ExpoWatchConnectivity.sendFile(fileUri, { hello: "world" })
+        }
       />
     </View>
   );

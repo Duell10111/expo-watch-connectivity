@@ -37,7 +37,8 @@ export type ApplicationContextPayload = { [key: string]: any };
 
 export type SessionStatePayload = {
   active: boolean;
-  activationState: number;
+  activationState: ActivationState;
+  error?: string;
 };
 
 export type BooleanStatePayload = {
@@ -58,3 +59,15 @@ export enum ActivationState {
    */
   ACTIVE,
 }
+
+export type ExpoWatchConnectivityEvents = {
+  installedState: (event: BooleanStatePayload) => void;
+  reachableState: (event: BooleanStatePayload) => void;
+  pairedState: (event: BooleanStatePayload) => void;
+  sessionStatus: (event: SessionStatePayload) => void;
+  newMessage: (event: NewMessagePayload) => void;
+  newFile: (event: NewFilePayload) => void;
+  finishedFileTransfer: (event: FileTransferFinishedPayload) => void;
+  finishedUserInfoTransfer: (event: UserInfoTransferFinishedPayload) => void;
+  applicationContext: (event: ApplicationContextPayload) => void;
+};

@@ -1,5 +1,28 @@
-import { requireNativeModule } from 'expo-modules-core';
+import { NativeModule, requireNativeModule } from "expo";
 
-// It loads the native module object from the JSI or falls back to
-// the bridge module (from NativeModulesProxy) if the remote debugger is on.
-export default requireNativeModule('ExpoWatchConnectivity');
+import type {
+  ApplicationContextPayload,
+  ExpoWatchConnectivityEvents,
+  FileTransferInfo,
+  TransferMetadata,
+} from "./ExpoWatchConnectivity.types";
+
+declare class ExpoWatchConnectivityModule extends NativeModule<ExpoWatchConnectivityEvents> {
+  isSupported: boolean;
+  isPaired(): Promise<boolean>;
+  isWatchAppInstalled(): Promise<boolean>;
+  isReachable(): Promise<boolean>;
+  getActivationState(): Promise<number>;
+  sendMessage(message: { [key: string]: any }): Promise<boolean>;
+  transferUserInfo(userInfo: { [key: string]: any }): Promise<boolean>;
+  getCurrentFileTransfers(): Promise<FileTransferInfo[]>;
+  sendFile(url: string, metadata?: TransferMetadata): Promise<void>;
+  getApplicationContext(): Promise<ApplicationContextPayload | null>;
+  getReceivedApplicationContext(): Promise<ApplicationContextPayload>;
+  updateApplicationContext(context: ApplicationContextPayload): Promise<void>;
+}
+
+// It loads the native module object from the JSI.
+export default requireNativeModule<ExpoWatchConnectivityModule>(
+  "ExpoWatchConnectivity",
+);

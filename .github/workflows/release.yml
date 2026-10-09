@@ -11,20 +11,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '21'
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Build plugin
-        run: yarn build
+        run: npm run build
 
       - name: Semantic Release (Versioning)
         run: npx semantic-release --dry-run
@@ -38,19 +39,20 @@ jobs:
     if: github.event_name == 'workflow_dispatch'  # Führt diesen Job nur bei manuellem Auslöser aus
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '21'
+          node-version: '22'
+          cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Build plugin
-        run: yarn build
+        run: npm run build
 
       - name: Publish to NPM
         run: npx semantic-release

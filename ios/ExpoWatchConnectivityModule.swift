@@ -16,7 +16,7 @@ public class ExpoWatchConnectivityModule: Module {
     ])
 
     // Defines event names that the module can send to JavaScript.
-    Events("installedState", "reachableState", "pairedState", "onChange", "sessionStatus",
+    Events("installedState", "reachableState", "pairedState", "sessionStatus",
            "newMessage", "newFile", "finishedFileTransfer", "finishedUserInfoTransfer", "applicationContext")
 
       AsyncFunction("isPaired") {

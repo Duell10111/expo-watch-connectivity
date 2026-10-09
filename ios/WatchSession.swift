@@ -43,7 +43,7 @@ class WatchSession: NSObject, WCSessionDelegate {
 
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
         let active = activationState == .activated
-        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": active, "error": error?.localizedDescription])
+        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": active, "activationState": activationState.rawValue, "error": error?.localizedDescription])
         
         // Once session activated send state updates to fix issues with wrong values
         if active {
@@ -54,14 +54,14 @@ class WatchSession: NSObject, WCSessionDelegate {
     }
 
     func sessionDidBecomeInactive(_ session: WCSession) {
-        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": false])
+        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": false, "activationState": session.activationState.rawValue])
     }
 
     func sessionDidDeactivate(_ session: WCSession) {
         // Begin the activation process for the new Apple Watch.
         activateSession()
 
-        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": false])
+        SessionSyncStruct.module?.sendEvent("sessionStatus", ["active": false, "activationState": session.activationState.rawValue])
     }
 
     func sessionWatchStateDidChange(_ session: WCSession) {

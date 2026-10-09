@@ -1,23 +1,18 @@
-import { EventEmitter, NativeModulesProxy, Subscription } from "expo-modules-core";
+import type { EventSubscription } from "expo-modules-core";
 
-// Import the native module. On web, it will be resolved to ExpoWatchConnectivity.web.ts
-// and on native platforms to ExpoWatchConnectivity.ts
-import {
-  ActivationState,
+import { ActivationState } from "./ExpoWatchConnectivity.types";
+import type {
   ApplicationContextPayload,
-  BooleanStatePayload,
   FileTransferFinishedPayload,
   FileTransferInfo,
   NewFilePayload,
   NewMessagePayload,
-  SessionStatePayload,
-  TransferMetadata,
   UserInfoTransferFinishedPayload,
 } from "./ExpoWatchConnectivity.types";
 import ExpoWatchConnectivityModule from "./ExpoWatchConnectivityModule";
 import { useEffect, useState } from "react";
 
-export const isSupported = ExpoWatchConnectivityModule.isSupported as boolean;
+export const isSupported = ExpoWatchConnectivityModule.isSupported;
 
 export async function isPaired(): Promise<boolean> {
   return ExpoWatchConnectivityModule.isPaired();
@@ -32,7 +27,7 @@ export async function isReachable(): Promise<boolean> {
 }
 
 export async function getActivationState(): Promise<ActivationState> {
-  return ExpoWatchConnectivityModule.getActivationState() as number;
+  return ExpoWatchConnectivityModule.getActivationState();
 }
 
 export async function getCurrentFileTransfers(): Promise<FileTransferInfo[]> {
@@ -60,26 +55,22 @@ export async function sendFile(
   return ExpoWatchConnectivityModule.sendFile(fileURL, metadata);
 }
 
-const emitter = new EventEmitter(
-  ExpoWatchConnectivityModule ?? NativeModulesProxy.ExpoWatchConnectivity,
-);
-
 export function addMessageListener(
   listener: (event: NewMessagePayload) => void,
-): Subscription {
-  return emitter.addListener<NewMessagePayload>("newMessage", listener);
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener("newMessage", listener);
 }
 
 export function addFileListener(
   listener: (event: NewFilePayload) => void,
-): Subscription {
-  return emitter.addListener<NewFilePayload>("newFile", listener);
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener("newFile", listener);
 }
 
 export function addFileTransferFinishedListener(
   listener: (event: FileTransferFinishedPayload) => void,
-): Subscription {
-  return emitter.addListener<FileTransferFinishedPayload>(
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener(
     "finishedFileTransfer",
     listener,
   );
@@ -91,8 +82,8 @@ export function addFileTransferFinishedListener(
  */
 export function addUserInfoTransferFinishedListener(
   listener: (event: UserInfoTransferFinishedPayload) => void,
-): Subscription {
-  return emitter.addListener<UserInfoTransferFinishedPayload>(
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener(
     "finishedUserInfoTransfer",
     listener,
   );
@@ -116,8 +107,8 @@ export function updateApplicationContext(value: ApplicationContextPayload): Prom
 
 export function addApplicationContextListener(
   listener: (event: ApplicationContextPayload) => void,
-): Subscription {
-  return emitter.addListener<ApplicationContextPayload>(
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener(
     "applicationContext",
     listener,
   );
@@ -125,8 +116,8 @@ export function addApplicationContextListener(
 
 export function isInstalledListener(
   listener: (isInstalled: boolean) => void,
-): Subscription {
-  return emitter.addListener<BooleanStatePayload>(
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener(
     "installedState",
     (event) => listener(event.state),
   );
@@ -134,8 +125,8 @@ export function isInstalledListener(
 
 export function isReachableListener(
   listener: (isReachable: boolean) => void,
-): Subscription {
-  return emitter.addListener<BooleanStatePayload>(
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener(
     "reachableState",
     (event) => listener(event.state),
   );
@@ -143,8 +134,8 @@ export function isReachableListener(
 
 export function isPairedListener(
   listener: (isPaired: boolean) => void,
-): Subscription {
-  return emitter.addListener<BooleanStatePayload>(
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener(
     "pairedState",
     (event) => listener(event.state),
   );
@@ -153,8 +144,8 @@ export function isPairedListener(
 // TODO: Add error handling
 export function addActivationListener(
   listener: (activationState: ActivationState) => void,
-): Subscription {
-  return emitter.addListener<SessionStatePayload>(
+): EventSubscription {
+  return ExpoWatchConnectivityModule.addListener(
     "sessionStatus",
     (event) => {
       listener(event.activationState)
@@ -211,13 +202,4 @@ export function usePaired() {
 
 // Types
 
-export {
-  ActivationState,
-  NewFilePayload,
-  FileTransferFinishedPayload,
-  FileTransferInfo,
-  NewMessagePayload,
-  ApplicationContextPayload,
-  TransferMetadata,
-  UserInfoTransferFinishedPayload,
-};
+export * from "./ExpoWatchConnectivity.types";

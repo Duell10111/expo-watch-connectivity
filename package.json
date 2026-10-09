@@ -30,9 +30,12 @@
   "homepage": "https://github.com/Duell10111/expo-watch-connectivity#readme",
   "dependencies": {},
   "devDependencies": {
-    "@types/react": "^18.0.25",
-    "expo-module-scripts": "^3.5.2",
-    "expo-modules-core": "^1.12.14"
+    "@types/react": "~19.2.0",
+    "expo": "^57.0.27",
+    "expo-module-scripts": "^56.0.3",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "typescript": "~6.0.3"
   },
   "peerDependencies": {
     "expo": "*",

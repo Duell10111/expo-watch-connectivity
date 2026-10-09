@@ -30,6 +30,19 @@ Run `npx pod-install` after installing the npm package.
 
 
 
+# Example app
+
+The example app in `example/` contains a watchOS companion app that echoes received messages. The watch target lives in `example/targets/watch` and is linked into the Xcode project by [`@bacons/apple-targets`](https://github.com/EvanBacon/expo-apple-targets).
+
+```
+cd example
+npm install
+npx expo prebuild -p ios --clean
+npx expo run:ios
+```
+
+To run on a device, set `ios.appleTeamId` in `example/app.json`. In Xcode, the watch sources are editable under the `expo:targets/watch` folder.
+
 # Contributing
 
 Contributions are very welcome! Please refer to guidelines described in the [contributing guide]( https://github.com/expo/expo#contributing).
