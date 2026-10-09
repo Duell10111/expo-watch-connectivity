@@ -7,6 +7,7 @@ import type {
   FileTransferInfo,
   NewFilePayload,
   NewMessagePayload,
+  TransferMetadata,
   UserInfoTransferFinishedPayload,
 } from "./ExpoWatchConnectivity.types";
 import ExpoWatchConnectivityModule from "./ExpoWatchConnectivityModule";
@@ -48,9 +49,7 @@ export async function transferUserInfo(userInfo: {
 
 export async function sendFile(
   fileURL: string,
-  metadata: {
-    [key: string]: any;
-  },
+  metadata?: TransferMetadata,
 ): Promise<void> {
   return ExpoWatchConnectivityModule.sendFile(fileURL, metadata);
 }
