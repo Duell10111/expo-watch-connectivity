@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios"],
+  "ios": {
+    "modules": ["ExpoWatchConnectivityModule"]
+  },
+  "android": {
+    "modules": ["com.duell10111.watchconnectivity.ExpoWatchConnectivityModule"]
+  }
+}
