@@ -13,7 +13,8 @@
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
-    "open:android": "open -a \"Android Studio\" example/android"
+    "open:android": "open -a \"Android Studio\" example/android",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "react-native",
@@ -28,11 +29,12 @@
   "author": "Konstantin Späth <duell10111@t-online.de> (https://github.com/Duell10111)",
   "license": "MIT",
   "homepage": "https://github.com/Duell10111/expo-watch-connectivity#readme",
-  "dependencies": {},
   "devDependencies": {
     "@types/react": "~19.2.0",
+    "eslint": "^9.39.5",
     "expo": "^57.0.27",
     "expo-module-scripts": "^56.0.3",
+    "prettier": "^3.9.10",
     "react": "19.2.3",
     "react-native": "0.86.3",
     "typescript": "~6.0.3"

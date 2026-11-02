@@ -43,7 +43,7 @@ export type SessionStatePayload = {
 
 export type BooleanStatePayload = {
   state: boolean;
-}
+};
 
 export enum ActivationState {
   /**
