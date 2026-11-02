@@ -1,22 +1,46 @@
 # expo-watch-connectivity
 
-[![npm](https://img.shields.io/npm/v/expo-watch-connectivity)](https://www.npmjs.com/package/expo-watch-connectivity)
-[![license](https://img.shields.io/npm/l/expo-watch-connectivity)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/expo-watch-connectivity?logo=npm)](https://www.npmjs.com/package/expo-watch-connectivity)
+[![npm beta version](https://img.shields.io/npm/v/expo-watch-connectivity/beta?label=npm%20beta&logo=npm)](https://www.npmjs.com/package/expo-watch-connectivity?activeTab=versions)
+[![npm downloads](https://img.shields.io/npm/dm/expo-watch-connectivity?logo=npm)](https://www.npmjs.com/package/expo-watch-connectivity)
+[![CI](https://github.com/Duell10111/expo-watch-connectivity/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Duell10111/expo-watch-connectivity/actions/workflows/ci.yml)
+[![Expo SDK](https://img.shields.io/badge/Expo%20SDK-57-000020?logo=expo)](https://docs.expo.dev/versions/latest/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
 
-An [Expo Module](https://docs.expo.dev/modules/overview/) that exposes Apple's [WatchConnectivity](https://developer.apple.com/documentation/watchconnectivity) framework to React Native. Use it to talk from your iOS app to its companion watchOS app: send messages, queue user info, sync application context and transfer files.
+Talk from your React Native iPhone app to its Apple Watch companion app. An [Expo module](https://docs.expo.dev/modules/overview/) around Apple's [WatchConnectivity](https://developer.apple.com/documentation/watchconnectivity) framework.
 
-- Live messages (`sendMessage`) and background-queued user info (`transferUserInfo`)
-- Application context sync in both directions
-- File transfers with metadata and progress
-- Session state (paired, installed, reachable, activation) as listeners and React hooks
-- Incoming messages, user info and files are **buffered natively** until JS subscribes, so nothing is lost when the app is launched or woken in the background by WatchConnectivity
+| Feature | |
+| --- | --- |
+| 💬 **Live messages** | `sendMessage` while the watch app is reachable |
+| 📬 **Queued user info** | `transferUserInfo` with guaranteed, in-order background delivery |
+| 🔄 **Application context** | Sync the latest state in both directions |
+| 📁 **File transfers** | Send and receive files with metadata and progress |
+| ⌚ **Session state** | Paired, installed, reachable and activation state as listeners and React hooks |
+| 🛟 **Event buffering** | Incoming messages, user info and files are buffered natively until JS subscribes, so nothing is lost when WatchConnectivity launches or wakes your app in the background |
 
-> **Platform support:** iOS only. On Android the native module is not registered.
+| Platform | Status |
+| --- | --- |
+| iOS (16.4+) | ✅ Supported |
+| watchOS | ⌚ Counterpart: your own watch app using `WCSession` ([see below](#adding-a-watchos-app)) |
+| Android | ❌ Not supported (the native module is not registered) |
+| Web | ❌ Not supported |
+
+## Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+- [Example app](#example-app)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installation
 
 ```sh
 npx expo install expo-watch-connectivity
+# or the latest prerelease
+npm install expo-watch-connectivity@beta
 ```
 
 The library contains native code, so it does not work in Expo Go. Use a [development build](https://docs.expo.dev/develop/development-builds/introduction/):
@@ -263,14 +287,17 @@ To run on a device, set `ios.appleTeamId` in `example/app.json`. In Xcode, the w
 
 ## Development
 
-```sh
-npm install
-npm run build     # compile TypeScript into build/
-npm run lint
-npm run open:ios  # open the example in Xcode
-```
+| Command | Description |
+| --- | --- |
+| `npm run build` | Compile TypeScript into `build/` |
+| `npm run lint` / `npm run typecheck` | ESLint and TypeScript checks |
+| `npm run open:ios` | Open the example app in Xcode |
 
 The JS API lives in [`src/`](./src) and the native implementation in [`ios/`](./ios).
+
+### Releases
+
+Releases are automated with [Release Please](https://github.com/googleapis/release-please) based on [Conventional Commits](https://www.conventionalcommits.org/). Pushes to `main` open a release PR for a stable version (npm `latest`), pushes to `beta` open one for a prerelease (npm `beta`). Merging the release PR tags the version, creates the GitHub release and publishes to npm. See [`AGENTS.md`](./AGENTS.md) for details.
 
 ## Contributing
 
